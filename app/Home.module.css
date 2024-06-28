@@ -15,6 +15,15 @@
     font-weight: bold;
   }
   
+  .participants {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .participants li {
+    font-size: 1.2em;
+  }
+  
   .table {
     margin: 20px auto;
     border-collapse: collapse;

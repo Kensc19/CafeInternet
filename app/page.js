@@ -4,7 +4,16 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Bitácora Proyecto de Redes - Café Internet</h1>
-      
+
+      <h2 className={styles.subtitle}>Participantes</h2>
+      <ul className={styles.participants}>
+        <li>Aarón Chacón Céspedes-C22037</li>
+        <li>Gabriel Chaves Rojas-C22202</li>
+        <li>Jesús Fuentes Condega-C12973</li>
+        <li>Kendall Sánchez Chinchilla-C27227</li>
+        <li>Blanca Segura Campos-C27403</li>
+      </ul>
+
       <h2 className={styles.subtitle}>Direcciones IP por Organización</h2>
       <table className={styles.table}>
         <thead>
