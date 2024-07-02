@@ -4,7 +4,7 @@ import Navbar from "./navbar";
 import styles from "./Home.module.css";
 
 export default function Home() {
-  const [section, setSection] = useState("participantes");
+  const [section, setSection] = useState("servidor");
 
   return (
     <div className={styles.container}>
@@ -254,22 +254,53 @@ export default function Home() {
             </thead>
             <tbody>
               <tr>
-                <td>Instalación del servidor TFTP</td>
                 <td>
-                  sudo apt install tftpd-hpa<br/>
-                  sudo nano /etc/default/tftpd-hpa<br/>
-                  TFTP_USERNAME="tftp"<br/>
-                  TFTP_DIRECTORY="/var/lib/tftpboot"<br/>
-                  TFTP_ADDRESS="0.0.0.0:69"<br/>
-                  TFTP_OPTIONS="--secure"<br/>
-                  sudo mkdir -p /var/lib/tftpboot<br/>
-                  sudo chown -R tftp:tftp /var/lib/tftpboot<br/>
-                  sudo chmod -R 777 /var/lib/tftpboot
+                  Instalación del Ubuntu server
                 </td>
                 <td>
-                  Se edita el archivo de configuración.<br/>
-                  Se agrega la siguiente información al archivo.<br/>
-                  Crear el directorio TFTP y establecer permisos.
+                  <a href='https://ubuntu.com/download/server'>https://ubuntu.com/download/server</a>
+                </td>
+                <td>
+                  Se descarga la imagen de instalación de la página oficial<br/>
+                  y se instala en una máquina física o en un ambiente de <br/>
+                  maquinas virtuales como VirtualBox o VMWare
+                </td>
+              </tr>
+              <tr>
+                <td>Instalación de los servicios</td>
+                <td>
+                  sudo apt-get install tftpd-hpa syslinux-common nfskernel-server
+                </td>
+                <td>
+                  Se instalan los servicios necesarios para el <br/>
+                  correcto funcionamiento del servidor PXE
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Instalación del servicio TFTP
+                </td>
+                <td>
+                  sudo nano /etc/default/tftpd-hpa <br/>
+                  sudo systemctl restart tftpd-hpa
+                </td>
+                <td>
+                  Se revisa el archivo para que tenga este formato: <br/>
+                  TFTP_USERNAME="tftp" <br/>
+                  TFTP_DIRECTORY="/srv/tftp" <br/>
+                  TFTP_ADDRESS="0.0.0.0:69" <br/>
+                  TFTP_OPTIONS="--secure" <br/>
+                </td>
+              </tr>
+              <tr>
+                <td>
+
+                </td>
+                <td>
+
+                </td>
+                <td>
+
                 </td>
               </tr>
             </tbody>
@@ -281,6 +312,11 @@ export default function Home() {
           <h2 className={styles.subtitle}>Esquema de red:</h2>
           <h2 className={styles.subtitle} style={{ fontWeight: "normal" }}>Mini Internet</h2>
           <img src="esquema.PNG" alt="Descripción de la imagen" className={styles.image} />
+        </>
+      )}
+      {section === "esquema" && (
+        <>
+          
         </>
       )}
     </div>
