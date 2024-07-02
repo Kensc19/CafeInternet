@@ -138,7 +138,7 @@ export default function Home() {
               <tr>
                 <td>Asignación de nombre a la vlan</td>
                 <td>name VLAN_Routers</td>
-                <td></td>
+                <td>Asignar un nombre a la VLAN facilita su identificación y organización en la red.</td>
               </tr>
               <tr>
                 <td>Revisar las interfaces</td>
@@ -148,12 +148,12 @@ export default function Home() {
               <tr>
                 <td>Habilitamos la configuración</td>
                 <td>configure terminal</td>
-                <td></td>
+                <td>El comando configure terminal habilita el modo de configuración global en el dispositivo de red.</td>
               </tr>
               <tr>
                 <td>Configurar un rango de interfaces</td>
                 <td>interface range g1/0/1-24</td>
-                <td></td>
+                <td>El comando interface range g1/0/1-24 permite configurar múltiples interfaces de manera simultánea, facilitando y agilizando la administración de la red al aplicar los mismos ajustes a todas las interfaces especificadas en el rango.</td>
               </tr>
               <tr>
                 <td>Configurar una interfaz de switch en modo acceso</td>
@@ -254,69 +254,123 @@ export default function Home() {
             </thead>
             <tbody>
               <tr>
-                <td>
-                  Instalación del Ubuntu server
-                </td>
+                <td>Instalación del Ubuntu server</td>
                 <td>
                   <a href='https://ubuntu.com/download/server'>https://ubuntu.com/download/server</a>
                 </td>
                 <td>
                   Se descarga la imagen de instalación de la página oficial<br/>
-                  y se instala en una máquina física o en un ambiente de <br/>
-                  maquinas virtuales como VirtualBox o VMWare
+                  y se instala en una máquina física o en un ambiente de<br/>
+                  maquinas virtuales como VirtualBox o VMWare.
                 </td>
               </tr>
               <tr>
                 <td>Instalación de los servicios</td>
-                <td>
-                  sudo apt-get install tftpd-hpa syslinux-common nfskernel-server
-                </td>
-                <td>
-                  Se instalan los servicios necesarios para el <br/>
-                  correcto funcionamiento del servidor PXE
-                </td>
+                <td>sudo apt-get install tftpd-hpa syslinux-common nfs-kernel-server</td>
+                <td>Se instalan los servicios necesarios para el correcto funcionamiento del servidor PXE.</td>
               </tr>
               <tr>
+                <td>Instalación del servicio TFTP</td>
                 <td>
-                  Instalación del servicio TFTP
-                </td>
-                <td>
-                  sudo nano /etc/default/tftpd-hpa <br/>
+                  sudo nano /etc/default/tftpd-hpa<br/>
                   sudo systemctl restart tftpd-hpa
                 </td>
                 <td>
-                  Se revisa el archivo para que tenga este formato: <br/>
-                  TFTP_USERNAME="tftp" <br/>
-                  TFTP_DIRECTORY="/srv/tftp" <br/>
-                  TFTP_ADDRESS="0.0.0.0:69" <br/>
-                  TFTP_OPTIONS="--secure" <br/>
+                  Se revisa el archivo para que tenga este formato:<br/>
+                  TFTP_USERNAME="tftp"<br/>
+                  TFTP_DIRECTORY="/srv/tftp"<br/>
+                  TFTP_ADDRESS="0.0.0.0:69"<br/>
+                  TFTP_OPTIONS="--secure"<br/>
+                  Se crea el directorio TFTP y se reinicia el servidor<br/>
+                  sudo mkdir -p /srv/tftp<br/>
+                  sudo systemctl restart tftpd-hpa
                 </td>
               </tr>
               <tr>
+                <td>Montar la partición de Linux Mint</td>
                 <td>
-
+                  sudo mount /dev/sdb2 /mnt/mint-root
+                </td>
+                <td>Esto se hace para que las máquinas puedan bootear.</td>
+              </tr>
+              <tr>
+                <td>Exportar la configuración NFS</td>
+                <td>
+                  sudo exportfs -a<br/>
+                  sudo systemctl restart nfs-kernel-server
+                </td>
+                <td>Se utilizan para exportar las configuraciones de NFS y reiniciar el servidor NFS. Esto asegura que cualquier cambio en las configuraciones de NFS se aplique correctamente y que el servidor esté funcionando adecuadamente para compartir archivos en la red.</td>
+              </tr>
+              <tr>
+                <td>Preparar los archivos de arranque</td>
+                <td>
+                  sudo cp /mnt/mint-root/boot/vmlinuz-* /srv/tftp/vmlinuz<br/>
+                  sudo cp /mnt/mint-root/boot/initrd.img-* /srv/tftp/initrd.img<br/>
+                  sudo chmod 755 /srv/tftp/vmlinuz<br/>
+                  sudo chmod 755 /srv/tftp/initrd.img<br/>
+                  sudo chown -R nobody:nogroup /srv/tftp
+                </td>
+                <td>Se utilizan para copiar los archivos del kernel y del initramfs desde el sistema de archivos montado a la ubicación del servidor TFTP. Esto es necesario para preparar el servidor TFTP para el arranque en red, asegurando que los archivos críticos del sistema estén disponibles para los clientes que lo requieran. Otorgan permisos de lectura y ejecución para todos los usuarios y permisos de escritura para el propietario de los archivos del kernel y del initramfs. El comando sudo chown -R nobody:nogroup /srv/tftp cambia el propietario y el grupo de todos los archivos en el directorio TFTP a nobody y nogroup, respectivamente. Esto es necesario para asegurar que los archivos sean accesibles y seguros para el servidor TFTP y sus clientes, evitando problemas de permisos y mejorando la seguridad.</td>
+              </tr>
+              <tr>
+                <td>Configurar PXE</td>
+                <td>
+                  sudo apt-get install syslinux-common<br/>
+                  wget http://ftp.debian.org/debian/dists/stable/main/installer-amd64/current/images/netboot/netboot.tar.gz<br/>
+                  sudo tar -xzf netboot.tar.gz -C /srv/tftp
+                </td>
+                <td>Copia el archivo pxelinux.0 al directorio del servidor TFTP. Esto es esencial para configurar PXELINUX, un componente crucial para el arranque en red (PXE).</td>
+              </tr>
+              <tr>
+                <td>Crear el directorio de configuraciones</td>
+                <td>
+                  sudo nano /srv/tftp/pxelinux.cfg/default
+                </td>
+                <td>Se agrega el siguiente contenido:<br/>
+                  DEFAULT linux<br/>
+                  LABEL linux<br/>
+                  KERNEL vmlinuz<br/>
+                  APPEND initrd=initrd.img root=/dev/nfs nfsroot=&lt;IP-servidor&gt;:/mnt/mint-root rw ip=dhcp
+                </td>
+              </tr>
+              <tr>
+                <td>Asignar una IP estática al servidor</td>
+                <td>
+                  sudo nano /etc/netplan/01-netcfg.yaml
                 </td>
                 <td>
-
+                  Se utiliza para crear o editar el archivo de configuración de Netplan, donde se asigna una IP estática al servidor. Se agregan los datos al archivo:<br/>
+                  network:<br/>
+                  version: 2<br/>
+                  renderer: networkd<br/>
+                  ethernets:<br/>
+                  enp0s3:<br/>
+                  dhcp4: no<br/>
+                  addresses:<br/>
+                  - 192.168.1.10/24<br/>
+                  gateway4: 192.168.1.1<br/>
+                  nameservers:<br/>
+                  addresses:<br/>
+                  - 8.8.8.8<br/>
+                  - 8.8.4.4<br/>
+                  Esto asegura que el servidor siempre utilice la dirección IP 192.168.1.10, para la IP estática del servidor.
                 </td>
-                <td>
-
-                </td>
+              </tr>
+              <tr>
+                <td>Aplicar la configuración</td>
+                <td>sudo netplan apply</td>
+                <td></td>
               </tr>
             </tbody>
           </table>
         </>
       )}
+
       {section === "esquema" && (
         <>
           <h2 className={styles.subtitle}>Esquema de red:</h2>
           <h2 className={styles.subtitle} style={{ fontWeight: "normal" }}>Mini Internet</h2>
           <img src="esquema.PNG" alt="Descripción de la imagen" className={styles.image} />
-        </>
-      )}
-      {section === "esquema" && (
-        <>
-          
         </>
       )}
     </div>
