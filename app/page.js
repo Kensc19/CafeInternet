@@ -383,6 +383,22 @@ export default function Home() {
                 <td>sudo netplan apply</td>
                 <td></td>
               </tr>
+              <tr>
+                <td>Se abren los puertos del firewall y se activa</td>
+                <td>
+                  sudo ufw enable <br/>
+                  sudo ufw allow "puerto"/"tpc/udp"
+                </td>
+                <td>
+                  Hay que abrir los puertos: <br/>
+                  69/udp <br/>
+                  2049/udp<br/>
+                  80/tcp<br/>
+                  443/tcp<br/>
+                  161/udp<br/>
+                  162/udp<br/>
+                </td>
+              </tr>
             </tbody>
           </table>
         </>
