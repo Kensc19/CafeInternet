@@ -236,6 +236,20 @@ export default function Home() {
                   Se excluyen para evitar colisiones, en este caso son el gateway.
                 </td>
               </tr>
+              <tr>
+                <td>Configuración del DHCP en el router</td>
+                <td>
+                  ip dhcp pool LAN_CI<br/>
+                  next-server 172.16.20.100<br/>
+                  option 67 ascii pxelinux.0<br/>
+                  sudo systemctl restart tftpd-hpa<br/>
+                  sudo systemctl restart nfs-kernel-server
+                </td>
+                <td>
+                  Se agrega la option 67 y el next server al DHCP.<br/>
+                  Se reinician los servicios y se prueban.
+                </td>
+              </tr>
             </tbody>
           </table>
         </>
@@ -285,6 +299,14 @@ export default function Home() {
                   sudo mkdir -p /srv/tftp<br/>
                   sudo systemctl restart tftpd-hpa
                 </td>
+              </tr>
+              <tr>
+                <td>Editar el archivo /etc/exports</td>
+                <td>
+                  sudo nano /etc/exports<br/>
+                  /mnt/mint-root *(rw,sync,no_subtree_check,no_root_squash)
+                </td>
+                <td>Se añade esta línea para configurar la exportación del sistema de archivos NFS.</td>
               </tr>
               <tr>
                 <td>Montar la partición de Linux Mint</td>
